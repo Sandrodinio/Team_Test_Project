@@ -1,6 +1,5 @@
 package htl.ah;
-
-import java.lang.System.Logger;
+import java.util.logging.*;
 import java.sql.*;
 
 public class DBManager {
