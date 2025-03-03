@@ -41,81 +41,85 @@ public class DBManager {
         }
     }
 
-    public boolean speichereCD(CD x) {
-        String insertSQL = "INSERT INTO cd (erscheinungsjahr, kuenstler, album) VALUES (?, ?, ?)";
-        try (Connection con = getConnection(); 
-            PreparedStatement preparedStatement = con.prepareStatement(insertSQL)) {
-            preparedStatement.setInt(1, x.getErscheinungsjahr());
-            preparedStatement.setString(2, x.getKuenstler());
-            preparedStatement.setString(3, x.getAlbum());
-            int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("CD gespeichert: " + x);
-            return rowsAffected > 0;
-        } catch (SQLException | ClassNotFoundException e) {
-            logger.severe("Fehler beim Speichern der CD: " + e.getMessage());
-            return false;
-        }
-    }
 
-    public boolean loescheCD(CD x) {
-        String deleteSQL = "DELETE FROM cd WHERE erscheinungsjahr = ? AND kuenstler = ? AND album = ?";
-        try (Connection con = getConnection();
-             PreparedStatement preparedStatement = con.prepareStatement(deleteSQL)) {
-            preparedStatement.setInt(1, x.getErscheinungsjahr());
-            preparedStatement.setString(2, x.getKuenstler());
-            preparedStatement.setString(3, x.getAlbum());
-            int rowsAffected = preparedStatement.executeUpdate();
-            logger.info("CD gelöscht: " + x);
-            return rowsAffected > 0;
-        } catch (SQLException | ClassNotFoundException e) {
-            logger.severe("Fehler beim Löschen der CD: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean updateCD(CD oldCD, CD newCD)   {
-        String updateSQL = "UPDATE cd SET erscheinungsjahr = ?, kuenstler = ?, album = ? WHERE erscheinungsjahr = ? AND kuenstler = ? AND album = ?";
-        try (Connection con = getConnection();
-             PreparedStatement preparedStatement = con.prepareStatement(updateSQL)) {
-            // Set new values
-            preparedStatement.setInt(1, newCD.getErscheinungsjahr());
-            preparedStatement.setString(2, newCD.getKuenstler());
-            preparedStatement.setString(3, newCD.getAlbum());
-            // Set old values for WHERE clause
-            preparedStatement.setInt(4, oldCD.getErscheinungsjahr());
-            preparedStatement.setString(5, oldCD.getKuenstler());
-            preparedStatement.setString(6, oldCD.getAlbum());
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                logger.info("CD aktualisiert: " + newCD);
-                return true;
-            } else {
-                logger.warning("Keine CD gefunden, die den Kriterien entspricht: " + oldCD);
-                return false;
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            logger.severe("Fehler beim Aktualisieren der CD: " + e.getMessage());
-        }
-        return false;
-    }
-    public ObservableList<CD> ladeCDs() {
-        ObservableList<CD> cds = FXCollections.observableArrayList();
-        String selectSQL = "SELECT erscheinungsjahr, kuenstler, album FROM CD";
-        try (Connection con = getConnection();
-             PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                CD x = new CD(resultSet.getInt("erscheinungsjahr"),
-                              resultSet.getString("kuenstler"),
-                              resultSet.getString("album"));
-                cds.add(x);
-            }
-            logger.info("CDs geladen: " + cds.size());
-        } catch (SQLException | ClassNotFoundException e) {
-            logger.severe("Fehler beim Laden der CDs: " + e.getMessage());
-        }
-        return cds;
-    }
+	public boolean speichereBenutzer(Benutzer benutzer) {
+	    String insertSQL = "INSERT INTO Benutzer (vorname, nachname, geburtsdatum) VALUES (?, ?, ?)";
+	    try (Connection con = getConnection();
+	         PreparedStatement preparedStatement = con.prepareStatement(insertSQL)) {
+	        preparedStatement.setString(1, benutzer.getVorname());
+	        preparedStatement.setString(2, benutzer.getNachname());
+	        preparedStatement.setString(3, benutzer.getGeburtsdatum());
+	        int rowsAffected = preparedStatement.executeUpdate();
+	        logger.info("Benutzer gespeichert: " + benutzer);
+	        return rowsAffected > 0;
+	    } catch (SQLException | ClassNotFoundException e) {
+	        logger.severe("Fehler beim Speichern des Benutzers: " + e.getMessage());
+	        return false;
+	    }
+	}
+	
+	public boolean loescheBenutzer(Benutzer benutzer) {
+	    String deleteSQL = "DELETE FROM Benutzer WHERE vorname = ? AND nachname = ? AND geburtsdatum = ?";
+	    try (Connection con = getConnection();
+	         PreparedStatement preparedStatement = con.prepareStatement(deleteSQL)) {
+	        preparedStatement.setString(1, benutzer.getVorname());
+	        preparedStatement.setString(2, benutzer.getNachname());
+	        preparedStatement.setString(3, benutzer.getGeburtsdatum());
+	        int rowsAffected = preparedStatement.executeUpdate();
+	        logger.info("Benutzer gelöscht: " + benutzer);
+	        return rowsAffected > 0;
+	    } catch (SQLException | ClassNotFoundException e) {
+	        logger.severe("Fehler beim Löschen des Benutzers: " + e.getMessage());
+	        return false;
+	    }
+	}
+	
+	public boolean updateBenutzer(Benutzer oldBenutzer, Benutzer newBenutzer) {
+	    String updateSQL = "UPDATE Benutzer SET vorname = ?, nachname = ?, geburtsdatum = ? WHERE vorname = ? AND nachname = ? AND geburtsdatum = ?";
+	    try (Connection con = getConnection();
+	         PreparedStatement preparedStatement = con.prepareStatement(updateSQL)) {
+	        // Set new values
+	        preparedStatement.setString(1, newBenutzer.getVorname());
+	        preparedStatement.setString(2, newBenutzer.getNachname());
+	        preparedStatement.setString(3, newBenutzer.getGeburtsdatum());
+	        // Set old values for WHERE clause
+	        preparedStatement.setString(4, oldBenutzer.getVorname());
+	        preparedStatement.setString(5, oldBenutzer.getNachname());
+	        preparedStatement.setString(6, oldBenutzer.getGeburtsdatum());
+	
+	        int rowsAffected = preparedStatement.executeUpdate();
+	        if (rowsAffected > 0) {
+	            logger.info("Benutzer aktualisiert: " + newBenutzer);
+	            return true;
+	        } else {
+	            logger.warning("Kein Benutzer gefunden, der den Kriterien entspricht: " + oldBenutzer);
+	            return false;
+	        }
+	    } catch (SQLException | ClassNotFoundException e) {
+	        logger.severe("Fehler beim Aktualisieren des Benutzers: " + e.getMessage());
+	        return false;
+	    }
+	}
+	
+	public ObservableList<Benutzer> ladeBenutzer() {
+	    ObservableList<Benutzer> benutzerList = FXCollections.observableArrayList();
+	    String selectSQL = "SELECT vorname, nachname, geburtsdatum FROM Benutzer";
+	    try (Connection con = getConnection();
+	         PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
+	         ResultSet resultSet = preparedStatement.executeQuery()) {
+	        while (resultSet.next()) {
+	            Benutzer benutzer = new Benutzer(
+	                resultSet.getString("vorname"),
+	                resultSet.getString("nachname"),
+	                resultSet.getString("geburtsdatum")
+	            );
+	            benutzerList.add(benutzer);
+	        }
+	        logger.info("Benutzer geladen: " + benutzerList.size());
+	    } catch (SQLException | ClassNotFoundException e) {
+	        logger.severe("Fehler beim Laden der Benutzer: " + e.getMessage());
+	    }
+	    return benutzerList;
+	}
 }
 
