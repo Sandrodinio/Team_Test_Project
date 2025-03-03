@@ -1,6 +1,9 @@
 package htl.ah;
 import java.util.logging.*;
 import java.sql.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 
 public class DBManager {
     private static DBManager instance = null;
