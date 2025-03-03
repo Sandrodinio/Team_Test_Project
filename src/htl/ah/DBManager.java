@@ -2,7 +2,6 @@ package htl.ah;
 
 import java.lang.System.Logger;
 import java.sql.*;
-import java.util.logging.*;
 
 public class DBManager {
     private static DBManager instance = null;
